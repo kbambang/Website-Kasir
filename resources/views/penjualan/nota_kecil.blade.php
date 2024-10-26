@@ -94,7 +94,7 @@
             <td class="text-right">{{ format_uang($penjualan->total_item) }}</td>
         </tr>
         <tr>
-            <td>Diskon:</td>
+            <td>Total Diskon:</td>
             <td class="text-right">{{ format_uang($penjualan->total_diskon) }}</td>
         </tr>
         <tr>
@@ -123,7 +123,7 @@
             );
 
         document.cookie = "innerHeight=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        document.cookie = "innerHeight="+ ((height + 5z0) * 0.264583);
+        document.cookie = "innerHeight="+ ((height + 50) * 0.264583);
     </script>
 </body>
 </html>

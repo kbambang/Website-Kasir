@@ -18,8 +18,12 @@ return new class extends Migration
             $table->string('telepon');
             $table->tinyInteger('tipe_nota');
             $table->string('path_logo');
-            $table->string('path_kartu_member');
+            // $table->string('path_kartu_member');
             $table->timestamps();
+            $table->string('instagram')->nullable(); // Pastikan kolom ini ada
+            $table->string('facebook')->nullable();
+            $table->string('twiter')->nullable();
+            $table->string('youtube')->nullable();
         });
     }
 

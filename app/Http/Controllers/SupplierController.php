@@ -47,12 +47,35 @@ class SupplierController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $supplier = Supplier::create($request->all());
+   public function store(Request $request)
+{
+    // Validasi input tanpa aturan unik
+    $request->validate([
+        'nama' => 'required',
+        'telepon' => 'required',
+        'alamat' => 'required',
+    ]);
 
-        return response()->json('Data berhasil disimpan', 200);
+    // Cek apakah supplier dengan nama atau telepon yang sama sudah ada
+    $existingSupplier = Supplier::where('nama', $request->nama)
+                                ->orWhere('telepon', $request->telepon)
+                                ->first();
+
+    if ($existingSupplier) {
+        // Kembalikan respons error jika ada data yang sama
+        return response()->json([
+            'message' => 'Supplier dengan nama atau telepon yang sama sudah ada.'
+        ], 422);
     }
+
+    // Simpan data baru jika tidak ada data duplikat
+    $supplier = Supplier::create($request->all());
+
+    return response()->json([
+        'message' => 'Data berhasil disimpan'
+    ], 200);
+}
+
 
     /**
      * Display the specified resource.

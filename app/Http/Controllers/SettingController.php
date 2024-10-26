@@ -19,30 +19,35 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
-        // Validasi data
-        $request->validate([
-            'nama_perusahaan' => 'required',
-            'telepon' => 'required',
-            'alamat' => 'required',
-            'path_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-    
-        // Simpan data ke database
-        $setting = Setting::first(); // Pastikan hanya ada satu record
+        $setting = Setting::first();
         $setting->nama_perusahaan = $request->nama_perusahaan;
         $setting->telepon = $request->telepon;
+        $setting->email = $request->email;
+        $setting->instagram = $request->instagram;
+        $setting->youtube = $request->youtube;
+        $setting->facebook = $request->facebook;
+        $setting->twiter = $request->twiter;
         $setting->alamat = $request->alamat;
-        
+        $setting->tipe_nota = $request->tipe_nota;
+
         if ($request->hasFile('path_logo')) {
             $file = $request->file('path_logo');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/logo'), $filename);
-            $setting->path_logo = '/uploads/logo/' . $filename;
+            $nama = 'logo-' . date('YmdHis') . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('/img'), $nama);
+
+            $setting->path_logo = "/img/$nama";
         }
-    
-        $setting->tipe_nota = $request->tipe_nota;
-        $setting->save();
-    
-        return response()->json('Pengaturan berhasil disimpan', 200);
+
+        // if ($request->hasFile('path_kartu_member')) {
+        //     $file = $request->file('path_kartu_member');
+        //     $nama = 'logo-' . date('Y-m-dHis') . '.' . $file->getClientOriginalExtension();
+        //     $file->move(public_path('/img'), $nama);
+
+        //     $setting->path_kartu_member = "/img/$nama";
+        // }
+
+        $setting->update();
+
+        return response()->json('Data berhasil disimpan', 200);
     }
-}    
+}

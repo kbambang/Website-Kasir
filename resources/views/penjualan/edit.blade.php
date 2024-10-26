@@ -1,12 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    Edit Transaksi Penjualan
-@endsection
-
-@section('breadcrumb')
-    @parent
-    <li class="active">Edit Transaksi</li>
+    Transaksi Penjualan
 @endsection
 
 @push('css')
@@ -36,6 +31,11 @@
     </style>
 @endpush
 
+@section('breadcrumb')
+    @parent
+    <li class="active">Transaksi Penjualan</li>
+@endsection
+
 @section('content')
     <div class="row">
         <div class="col-lg-12">
@@ -48,6 +48,8 @@
                             <div class="col-lg-5">
                                 <div class="input-group">
                                     <input type="hidden" name="id_penjualan" id="id_penjualan" value="{{ $penjualan->id_penjualan }}">
+                                    <!-- HIDDEN: Input ini berfungsi untuk menyimpan id_penjualan, yang merupakan ID unik untuk transaksi penjualan saat ini. -->
+                                    <!-- {{ $penjualan->id_penjualan }} akan diganti dengan nilai dari variabel $penjualan->id_penjualan -->
                                     <input type="hidden" name="id_produk" id="id_produk">
                                     <input type="text" class="form-control" name="kode_produk" id="kode_produk">
                                     <span class="input-group-btn">
@@ -64,6 +66,7 @@
                             <th>Kode</th>
                             <th>Nama</th>
                             <th>Harga</th>
+                            <th>Stok</th>
                             <th width="15%">Jumlah</th>
                             <th>Diskon</th>
                             <th>Subtotal</th>
@@ -82,7 +85,7 @@
                                 <input type="hidden" name="total" id="total">
                                 <input type="hidden" name="total_item" id="total_item">
                                 <input type="hidden" name="bayar" id="bayar">
-                               
+
 
                                 <div class="form-group row">
                                     <label for="totalrp" class="col-lg-2 control-label">Total</label>
@@ -137,70 +140,144 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let table, table2;
+        let isStokValid = true; // Variabel untuk validasi stok
 
         $(function() {
             $('body').addClass('sidebar-collapse');
 
             table = $('.table-penjualan').DataTable({
-                responsive: true,
-                processing: true,
-                serverSide: true,
-                autoWidth: false,
-                ajax: {
-                    url: '{{ route('transaksi.data', $penjualan->id_penjualan) }}',
-                },
-                columns: [
-                    { data: 'DT_RowIndex', searchable: false, sortable: false },
-                    { data: 'kode_produk' },
-                    { data: 'nama_produk' },
-                    { data: 'harga_jual' },
-                    { data: 'jumlah' },
-                    { data: 'diskon' },
-                    { data: 'subtotal' },
-                    { data: 'aksi', searchable: false, sortable: false },
-                ],
-                dom: 'Brt',
-                bSort: false,
-                paginate: false
-            }).on('draw.dt', function() {
-                loadForm($('#diskon').val());
-                setTimeout(() => {
-                    $('#diterima').trigger('input');
-                }, 300);
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    autoWidth: false,
+                    ajax: {
+                        url: '{{ route('transaksi.data', $penjualan->id_penjualan) }}',
+                    },
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            searchable: false,
+                            sortable: false
+                        },
+                        {
+                            data: 'kode_produk'
+                        },
+                        {
+                            data: 'nama_produk'
+                        },
+                        {
+                            data: 'harga_jual'
+                        },
+                        {
+                            data: 'stok'
+                        },
+                        {
+                            data: 'jumlah'
+                        },
+                        {
+                            data: 'diskon'
+                        },
+                        {
+                            data: 'subtotal'
+                        },
+                        {
+                            data: 'aksi',
+                            searchable: false,
+                            sortable: false
+                        },
+                    ],
+                    dom: 'Brt',
+                    bSort: false,
+                    paginate: false
+                })
+                .on('draw.dt', function() {
+                    loadForm($('#diskon').val());
+                    setTimeout(() => {
+                        $('#diterima').trigger('input');
+                    }, 300);
+                });
+
+            // Fungsi untuk memeriksa stok
+            function checkStok() {
+                isStokValid = true; // Reset nilai sebelum pengecekan stok
+
+                // Cek stok untuk setiap produk dalam tabel
+                $('.table-penjualan tbody tr').each(function() {
+                    let stokTersedia = parseInt($(this).find('.stok').text()); // Stok yang tersedia
+                    let jumlah = parseInt($(this).find('.quantity').val()) || 0; // Jumlah yang diinput
+
+                    if (jumlah > stokTersedia || stokTersedia === 0) {
+                        isStokValid = false; // Stok tidak cukup atau habis
+                        return false; // Hentikan pengecekan jika ada stok yang habis
+                    }
+                });
+            }
+
+
+            $('#kode_produk').on('keypress', function(e) {
+                if (e.which == 13) { // Kode 13 adalah kode untuk tombol Enter
+                    e.preventDefault();
+                    let kodeProduk = $(this).val().trim(); // Ambil nilai kode produk dari input
+
+                    if (kodeProduk !== '') {
+                        // Kirimkan request AJAX ke server untuk menambah produk berdasarkan kode
+                        $.ajax({
+                            url: '{{ route('transaksi.store') }}', // Route untuk menyimpan produk ke transaksi
+                            type: 'POST',
+                            data: {
+                                kode_produk: kodeProduk,
+                                id_penjualan: '{{ session('id_penjualan') }}', // Kirim ID Penjualan dari session
+                                _token: '{{ csrf_token() }}' // Token CSRF
+                            },
+                            success: function(response) {
+                                // Reset input setelah produk ditambahkan
+                                $('#kode_produk').val('');
+                                // Reload data tabel penjualan setelah produk ditambahkan
+                                table.ajax.reload();
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Produk tidak ditemukan',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                $('#kode_produk').val(''); // Reset input kode produk jika error
+                            }
+                        });
+                    }
+                }
             });
 
-                $(document).on('input', '.quantity', function() {
-                    let id = $(this).data('id');
-                    let jumlahBaru = parseInt($(this).val());
-    let jumlahLama = $(this).data('old-value') || jumlahBaru;
 
+            $(document).on('input', '.quantity', function() {
+                let id = $(this).data('id');
+                let jumlah = parseInt($(this).val());
+                let stok = parseInt($(this).parent().parent().find('.stok').text());
 
-    if (jumlahBaru < 1) {
-        $(this).val(jumlahLama); // Kembalikan ke nilai lama jika tidak valid
-        Swal.fire({
-            icon: 'warning',
-            title: 'Jumlah Tidak Valid',
-            text: 'Jumlah tidak boleh kurang dari 1',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-    if (jumlahBaru > 10000) {
-        $(this).val(jumlahLama); // Kembalikan ke nilai lama jika tidak valid
-        Swal.fire({
-            icon: 'warning',
-            title: 'Jumlah Tidak Valid',
-            text: 'Jumlah tidak boleh lebih dari 10000',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-                    
+                if (jumlah < 1) {
+                    $(this).val(1);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Jumlah Tidak Valid',
+                        text: 'Jumlah tidak boleh kurang dari 1',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+                if (jumlah > stok) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Stok Tidak Valid',
+                        text: 'Jumlah stok melebihi stok yang tersedia',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
                 $.post(`{{ url('/transaksi') }}/${id}`, {
                         '_token': $('[name=csrf-token]').attr('content'),
                         '_method': 'put',
-                        'jumlah': jumlahBaru,
-                        'selisih': selisih 
+                        'jumlah': jumlah
                     })
                     .done(response => {
                         table.ajax.reload(() => loadForm($('#diskon').val()));
@@ -214,8 +291,8 @@
                         });
                         return;
                     });
-                    $(this).data('old-value', jumlahBaru); 
             });
+
 
 
             $(document).on('input', '#diskon', function() {
@@ -240,12 +317,32 @@
             $(document).on('click', '.btn-simpan', function(e) {
                 e.preventDefault();
 
+                checkStok(); // Cek stok sebelum menyimpan
+
+                if (!isStokValid) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Stok Tidak Cukup!',
+                        text: 'Tidak dapat menyimpan transaksi karena stok habis atau tidak mencukupi.',
+                        confirmButtonText: 'OK'
+                    });
+                    return; // Hentikan proses simpan jika stok tidak cukup
+                }
 
                 // Ambil nilai total dan uang diterima
                 let totalBayar = parseFloat($('#bayar').val().replace(/[^0-9.-]+/g, ""));
                 let uangDiterima = parseFloat($('#diterima').val().replace(/\./g, '').replace(',', '.'));
 
-
+                // Validasi input produk
+                if ($('#total_item').val() === '0') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Produk Belum Dipilih!',
+                        text: 'Silakan tambahkan produk ke dalam transaksi sebelum menyimpan.',
+                        confirmButtonText: 'OK'
+                    });
+                    return; // Hentikan proses simpan jika produk tidak dipilih
+                }
 
                 // Validasi input angka
                 if (isNaN(uangDiterima) || isNaN(totalBayar)) {
@@ -281,12 +378,12 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil',
-                            text: 'Transaksi berhasil disimpan!',
-                            confirmButtonText: 'OK'
+                            showConfirmButton: false,
                         });
                     }
                 });
             });
+
 
         });
 
@@ -306,22 +403,17 @@
         }
 
         function tambahProduk() {
-    $.ajax({
-        url: '{{ route('transaksi.update', $penjualan->id_penjualan) }}',  // Adjust the route to call update
-        type: 'PUT',  // Use PUT or PATCH for updating
-        data: $('.form-produk').serialize(),
-        success: function(response) {
-            $('#kode_produk').focus();
-            table.ajax.reload(() => loadForm($('#diskon').val()));
-        },
-        error: function(errors) {
-            alert('Tidak dapat menyimpan data');
-            return;
+            $.post('{{ route('transaksi.store') }}', $('.form-produk').serialize())
+                .done(response => {
+                    $('#kode_produk').focus();
+                    // table.ajax.reload(() => loadForm($('#diskon').val()));
+                    table.ajax.reload(null, false)
+                })
+                .fail(errors => {
+                    alert('Tidak dapat menyimpan data');
+                    return;
+                });
         }
-    });
-}
-
-
 
         function deleteData(url) {
             Swal.fire({
@@ -351,6 +443,7 @@
         }
 
         function loadForm(diskon = 0, diterima = 0) {
+
             $('#total').val($('.total').text());
             $('#total_item').val($('.total_item').text());
 
@@ -375,7 +468,5 @@
                     return;
                 });
         }
-      
-        
     </script>
 @endpush

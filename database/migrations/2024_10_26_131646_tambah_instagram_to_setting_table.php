@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengeluaran', function(Blueprint $table){
-            $table->increments('id_pengeluaran');
-            $table->text('deskripsi');
-            $table->integer('nominal');
-            $table->timestamps();
+        Schema::table('setting', function (Blueprint $table) {
+                $table->string('instagram')->nullable();
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pengeluaran');
+        Schema::table('setting', function (Blueprint $table) {
+            $table->dropColumn('instagram');
+        });
     }
 };

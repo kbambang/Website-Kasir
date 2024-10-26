@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('penjualan', function (Blueprint $table) {
-            $table->integer('id_member')
-                    ->nullable()
-                    ->change();
+        Schema::table('setting', function (Blueprint $table) {
+            $table->string('twiter')->nullable();
         });
     }
 
@@ -23,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('penjualan', function (Blueprint $table) {
-            $table->integer('id_member')
-            ->change();
+        Schema::table('setting', function (Blueprint $table) {
+            $table->dropColumn('twiter');
         });
     }
 };

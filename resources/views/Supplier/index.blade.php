@@ -64,29 +64,39 @@
         });
 
         $('#modal-form').validator().on('submit', function (e) {
-            if (!e.isDefaultPrevented()) {
-                $.post($('#modal-form form').attr('action'), $('#modal-form form').serialize())
-                .done((response) => {
-                        $('#modal-form').modal('hide');
-                        table.ajax.reload();
-                        Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'Supplier berhasil disimpan',
-                        confirmButtonText: 'OK'
-                    });
-                    })
-                    .fail((errors) => {
-                        Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: 'Tidak dapat menyimpan Supplier!',
-                        confirmButtonText: 'OK'
-                    });
-                    });
-                return false; // Prevent default form submission
+    if (!e.isDefaultPrevented()) {
+        $.post($('#modal-form form').attr('action'), $('#modal-form form').serialize())
+        .done((response) => {
+            $('#modal-form').modal('hide');
+            table.ajax.reload();
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: response.message,
+                confirmButtonText: 'OK'
+            });
+        })
+        .fail((errors) => {
+            if (errors.status === 422) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: errors.responseJSON.message, // Menampilkan pesan error dari backend
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Tidak dapat menyimpan Supplier!',
+                    confirmButtonText: 'OK'
+                });
             }
-        }); 
+        });
+        return false; // Mencegah form submit secara default
+    }
+});
+
     });
 
     function addForm(url) {

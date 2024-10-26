@@ -50,7 +50,7 @@ class PenjualanController extends Controller
                 return '
                 <div class="btn-group">
                     <button onclick="showDetail(`'. route('penjualan.show', $penjualan->id_penjualan) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-eye"></i></button>
-                
+                    
                     <button onclick="deleteData(`'. route('penjualan.destroy', $penjualan->id_penjualan) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                 </div>
                 ';
@@ -90,7 +90,7 @@ class PenjualanController extends Controller
 
         foreach ($detail as $item) {
             $diskonItem = ($item->diskon / 100) * $item->harga_jual * $item->jumlah;
-            $totalDiskon -= $diskonItem;
+            $totalDiskon += $diskonItem;
         }
 
         // Simpan total diskon ke dalam Penjualan
@@ -98,14 +98,7 @@ class PenjualanController extends Controller
 
         $penjualan->update();
 
-        $detail = PenjualanDetail::where('id_penjualan', $penjualan->id_penjualan)->get();
-        foreach ($detail as $item) {
-            $item->update();
-
-            $produk = Produk::find($item->id_produk);
-            $produk->stok -= $item->jumlah;
-            $produk->update();
-        }
+       
 
         return redirect()->route('transaksi.selesai');
     }
@@ -149,8 +142,6 @@ class PenjualanController extends Controller
 
 public function update(Request $request, $id)
 {
-
-    
 
     $detail = PenjualanDetail::find($id);
     $produk = Produk::find($detail->id_produk);
