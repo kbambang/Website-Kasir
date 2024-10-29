@@ -46,11 +46,11 @@
         }
 
         .container-ber {
-            margin-top: 80px;
+            margin-top: 20vh;
         }
 
         .img-ber {
-            margin-top: 50px;
+            margin-top: 100px;
         }
 
         .teks-ber {
@@ -95,7 +95,9 @@
         }
 
         .img-ten {
-            border-radius: 10px;
+            height: 85vh;
+            border-radius: 20px;
+            padding: 1px 0px 0px 10px;
         }
 
         .teks-tentang {
@@ -513,11 +515,11 @@
                     data-aos-duration="800">Mulai</a></div>
         </div>
         <div class="img-ber" data-aos="fade-up" data-aos-duration="1000">
-            <img src="{{ asset('images/ftBeranda.png') }}" alt="" width="400px" height="400px">
+            <img src="{{ asset('images/ftBeranda.png') }}" alt="" width="400vh" height="400vh">
         </div>
     </section>
 
-    <!-- Bagian Tim -->
+    <!-- Bagian tentang kasir -->
 
     <section class="tentang" id="tentang">
         <!-- Image Section -->
@@ -678,11 +680,11 @@
                     <p>Jalan. Talagasari No. 35 Kawalimukti <br> Kawali Ciamis 46253</p>
                     <a target="_blank" href="https://wa.me/085727831822">
                         <p><img src="{{ asset('images/phone.png') }}" alt="" width="10px"
-                                height="10px">085727831822</p>
+                                height="10px">{{ $setting->telepon }}</p>
                     </a>
                     <a target="_blank" href="{{ $setting->email }}">
                         <p><img src="{{ asset('images/email.png') }}" alt="" width="10px"
-                                height="10px">SmartKasir@gmail.com</p>
+                                height="10px">{{ $setting->email }}</p>
                     </a>
                 </div>
             </div>

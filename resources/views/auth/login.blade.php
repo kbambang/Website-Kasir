@@ -69,7 +69,7 @@
 
         .login {
             background: #446DB2;
-            height: 555px;
+            height: 100vh;
             width: 50%;
         }
 
@@ -200,7 +200,7 @@
 
             .login {
                 width: 100%;
-                height: 430px;
+                height: 100vh;
             }
 
             .teks-ber,

@@ -105,14 +105,6 @@
                         text: 'Tidak dapat menyimpan produk!',
                         confirmButtonText: 'Oke'
                     });
-                    })
-                    .fail((errorss) => {
-                        Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: 'Tidak dapat menyimpan produk karna produk sudah ada!',
-                        confirmButtonText: 'Oke'
-                    });
                     });
             }
         });
