@@ -75,7 +75,7 @@
                     </div>
                 </form>
 
-                <table class="table table-stiped table-bordered table-pembelian">
+                <table class="table table-striped table-bordered table-pembelian">
                     <thead>
                         <th width="5%">No</th>
                         <th>Kode</th>

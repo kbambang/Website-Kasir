@@ -182,7 +182,7 @@
 
             .hal-login {
                 flex-direction: column;
-                margin-top: 0px;
+            
             }
 
             .teks-ber {
@@ -190,17 +190,16 @@
             }
 
             .font {
-                margin-top: -20px;
-            }
-
-            .font {
-                width: 100%;
-                height: 200px;
+                display: none;
             }
 
             .login {
                 width: 100%;
                 height: 100vh;
+            }
+
+            .form-login{
+                margin-top: 100px;
             }
 
             .teks-ber,

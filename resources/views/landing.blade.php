@@ -494,10 +494,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#tim11">Tim</a>
                     </li>
-                    <!-- Login Button -->
-                    <li class="nav-itemm">
-                        <a class="btn btn-outline-light ms-3"href="{{ route('login') }}">Login</a>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -512,7 +508,7 @@
                 <br>transaksi
                 penjualan yang dibutuhkan bagi Toko Swalayan maupun <br>Sekolah Pencetak Wirausaha (SPW)</p>
             <div class="buttom-ber"><a href="{{ route('login') }}" class="btn btn-lg" data-aos="zoom-in"
-                    data-aos-duration="800">Mulai</a></div>
+                    data-aos-duration="800">Login</a></div>
         </div>
         <div class="img-ber" data-aos="fade-up" data-aos-duration="1000">
             <img src="{{ asset('images/ftBeranda.png') }}" alt="" width="400vh" height="400vh">
@@ -678,11 +674,11 @@
                 <div class="kasirrr">
                     <h5 class="teks-kami">SmartKasir</h5>
                     <p>Jalan. Talagasari No. 35 Kawalimukti <br> Kawali Ciamis 46253</p>
-                    <a target="_blank" href="https://wa.me/085727831822">
+                    <a target="_blank" href="https://wa.me/{{ $setting->telepon }}">
                         <p><img src="{{ asset('images/phone.png') }}" alt="" width="10px"
                                 height="10px">{{ $setting->telepon }}</p>
                     </a>
-                    <a target="_blank" href="{{ $setting->email }}">
+                    <a target="_blank" href="mailto:{{ $setting->email }}">
                         <p><img src="{{ asset('images/email.png') }}" alt="" width="10px"
                                 height="10px">{{ $setting->email }}</p>
                     </a>

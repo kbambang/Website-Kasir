@@ -57,7 +57,7 @@
             <a href="{{ route('supplier.index') }}" class="small-box-footer">lihat <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <div class="row">
+       
           <div class="col-lg-3 col-xs-6">
               <!-- small box for total pendapatan -->
               <div class="small-box bg-red">
@@ -71,7 +71,7 @@
                   <a href="{{ route('laporan.index') }}" class="small-box-footer">Lihat<i class="fa fa-arrow-circle-right"></i></a>
               </div>
           </div>
-      </div>
+   
       
       
         <!-- ./col -->
@@ -119,7 +119,7 @@
                 <div class="box-body table-responsive">
                     <form action="" method="post" class="form-produk">
                         @csrf
-                        <table class="table table-stiped table-bordered">
+                        <table class="table table-striped table-bordered">
                             <thead>
                                 <th width="5%">No</th>
                                 <th>Kode</th>
@@ -166,7 +166,7 @@
                     pointDot: false,
                     responsive: true,
                     scaleLabel: function(label) {
-                        return 'Rp ' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                        return 'Rp .' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
                             "."); // Format Rupiah
                     },
                     scales: {
